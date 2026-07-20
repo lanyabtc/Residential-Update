@@ -6,49 +6,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   * { box-sizing: border-box; }
-  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f7f8fa; margin: 0; color: #1a1a1a; }
-  header { background: #14142b; color: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
-  header .brand { display: flex; align-items: center; gap: 10px; }
-  header .brand .dot { width: 28px; height: 28px; border-radius: 8px; background: #6c5ce7; display: flex; align-items: center; justify-content: center; }
-  header .brand b { font-size: 15px; }
-  header .brand span { color: #aaa; font-size: 13px; margin-left: 8px; }
-  header .right { display: flex; align-items: center; gap: 10px; }
-  header .badge { background: #26264a; padding: 4px 12px; border-radius: 6px; font-size: 12px; }
-  #lockBtn { background: #26264a; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-  #lockBtn.unlocked { background: #219150; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f4f6f8; margin: 0; color: #1a1a1a; }
 
-  .layout { display: flex; min-height: calc(100vh - 52px); }
+  .hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #14263e 100%);
+    color: white;
+    padding: 22px 28px;
+  }
+  .hero-top { display: flex; align-items: center; justify-content: space-between; }
+  .hero-brand { display: flex; align-items: center; gap: 14px; }
+  .hero-brand img { height: 34px; }
+  .hero-brand .fallback-logo { font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+  .hero-brand .fallback-logo .accent { color: #e8792f; }
+  .hero-titles { border-left: 1px solid rgba(255,255,255,0.25); padding-left: 14px; }
+  .hero-titles .t1 { font-size: 15px; font-weight: 600; }
+  .hero-titles .t2 { font-size: 12px; color: #9fb3c8; }
+  .hero-right { display: flex; align-items: center; gap: 10px; }
+  .hero .badge { background: rgba(255,255,255,0.12); padding: 4px 12px; border-radius: 6px; font-size: 12px; }
+  #lockBtn { background: #e8792f; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; }
+  #lockBtn.unlocked { background: #2e9e5b; }
+  .hero-note {
+    margin-top: 14px; font-size: 12px; color: #cdd8e3; background: rgba(255,255,255,0.06);
+    padding: 8px 12px; border-radius: 6px; display: inline-block;
+  }
+
+  .layout { display: flex; min-height: calc(100vh - 110px); }
   nav { width: 220px; background: white; border-right: 1px solid #eee; padding: 18px 12px; }
   nav .section-label { font-size: 11px; color: #999; text-transform: uppercase; padding: 6px 10px; letter-spacing: 0.5px; }
   nav .item { display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #333; margin-bottom: 2px; }
   nav .item:hover { background: #f5f5f7; }
-  nav .item.active { background: #eef0ff; color: #4c3fd6; font-weight: 600; }
+  nav .item.active { background: #fdeee1; color: #c85f16; font-weight: 600; }
   nav .item .count { background: #eee; color: #666; font-size: 11px; padding: 1px 8px; border-radius: 10px; }
-  nav .item.active .count { background: #4c3fd6; color: white; }
+  nav .item.active .count { background: #e8792f; color: white; }
   nav .item.overdue-item .count { background: #fdecea; color: #c0392b; }
   nav .divider { height: 1px; background: #eee; margin: 14px 0; }
   nav .action-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #444; }
   nav .action-item:hover { background: #f5f5f7; }
   nav .action-item.disabled { color: #ccc; cursor: not-allowed; }
+  nav .action-item.danger { color: #c0392b; }
 
   main { flex: 1; padding: 22px 26px; }
   .cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 18px; }
   .card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-top: 3px solid #ccc; }
-  .card.total { border-top-color: #888; }
-  .card.notsent { border-top-color: #4c6fff; }
-  .card.responded { border-top-color: #2ecc71; }
+  .card.total { border-top-color: #7c8896; }
+  .card.notsent { border-top-color: #1e3a5f; }
+  .card.responded { border-top-color: #2e9e5b; }
   .card.overdue { border-top-color: #e74c3c; }
-  .card.rate { border-top-color: #6c5ce7; }
+  .card.rate { border-top-color: #e8792f; }
   .card .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.4px; }
   .card .num { font-size: 26px; font-weight: 700; margin: 4px 0 2px; }
   .card .sub { font-size: 12px; color: #999; }
   .card .bar { height: 5px; background: #eee; border-radius: 3px; margin-top: 8px; overflow: hidden; }
-  .card .bar-fill { height: 100%; background: #6c5ce7; }
+  .card .bar-fill { height: 100%; background: #e8792f; }
 
   .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   button { border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-primary { background: #4c3fd6; color: white; }
+  .btn-primary { background: #1e3a5f; color: white; }
   .btn-warn { background: #fff7e6; color: #b8860b; border: 1px solid #f0d78c; }
   .btn-outline { background: white; color: #333; border: 1px solid #ddd; }
   .toolbar .spacer { flex: 1; }
@@ -69,30 +83,42 @@
   .name-cell b { display: block; }
   .name-cell span { color: #999; font-size: 12px; }
   .status-pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .status-NotSent { background: #eef0ff; color: #4c5fd6; }
+  .status-NotSent { background: #e9edf2; color: #1e3a5f; }
   .status-Sent { background: #fff7e6; color: #b8860b; }
   .status-Responded { background: #e8f9ee; color: #219150; }
   .status-Overdue { background: #fdecea; color: #c0392b; }
+  .send-one-btn {
+    background: none; border: 1px solid #ddd; color: #1e3a5f; padding: 4px 10px;
+    font-size: 11px; border-radius: 6px; font-weight: 600;
+  }
+  .send-one-btn:hover { background: #f4f6f8; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: #999; }
   .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
   .empty-state b { color: #444; display: block; margin-bottom: 4px; font-size: 15px; }
 
-  #toast { position: fixed; bottom: 20px; right: 20px; background: #14142b; color: white; padding: 12px 18px; border-radius: 8px; font-size: 13px; display: none; }
+  #toast { position: fixed; bottom: 20px; right: 20px; background: #1e3a5f; color: white; padding: 12px 18px; border-radius: 8px; font-size: 13px; display: none; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <div class="dot">🏢</div>
-    <div><b>Elitez Group</b><span>Foreign Worker Residential Update</span></div>
+<div class="hero">
+  <div class="hero-top">
+    <div class="hero-brand">
+      <img src="logo.png" alt="Elitez" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';">
+      <div class="fallback-logo" id="fallbackLogo" style="display:none">ELI<span class="accent">T</span>EZ</div>
+      <div class="hero-titles">
+        <div class="t1">Foreign Worker Residential Update</div>
+        <div class="t2">HR Workforce Portal · Internal Use Only</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="badge" id="campaignBadge">–</div>
+      <button id="lockBtn">🔒 Admin Login</button>
+    </div>
   </div>
-  <div class="right">
-    <div class="badge" id="campaignBadge">–</div>
-    <button id="lockBtn">🔒 Admin Login</button>
-  </div>
-</header>
+  <div class="hero-note">⚠ This dashboard contains confidential worker data. Do not share this link outside HR.</div>
+</div>
 
 <div class="layout">
   <nav>
@@ -107,6 +133,7 @@
     <div class="section-label">Actions (admin)</div>
     <div class="action-item disabled" id="btnImport">⬆ Import New Workers</div>
     <div class="action-item disabled" id="btnRefresh">🔄 Refresh Now</div>
+    <div class="action-item disabled danger" id="btnResetCampaign">⟲ Reset Campaign Data</div>
   </nav>
 
   <main>
@@ -121,6 +148,8 @@
     <div class="toolbar">
       <button class="btn-primary" id="btnSendAll" disabled>▶ Send All</button>
       <button class="btn-warn" id="btnSendReminders" disabled>🔔 Send Reminders</button>
+      <div class="spacer"></div>
+      <button class="btn-outline" id="btnResetFilters">↺ Reset Filters</button>
     </div>
 
     <div class="filters">
@@ -131,7 +160,7 @@
     <div class="panel">
       <div class="panel-head"><b>Workers</b><span class="results" id="resultsCount">0 results</span></div>
       <table>
-        <thead><tr><th>Name &amp; Entity</th><th>FIN</th><th>Pass Type</th><th>Email</th><th>Status</th><th>Sent</th><th>Responded</th></tr></thead>
+        <thead><tr><th>Name &amp; Entity</th><th>FIN</th><th>Pass Type</th><th>Email</th><th>Status</th><th>Sent</th><th>Responded</th><th>Action</th></tr></thead>
         <tbody id="tableBody"></tbody>
       </table>
       <div class="empty-state" id="emptyState" style="display:none">
@@ -145,7 +174,7 @@
 
 <script>
   // ── The only line you need to change: paste your Apps Script Web App URL here ──
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEjnvSFQwEeIhEdxS-LcNMNl4BW-LNihgM8bGC_RqaqNKR1rQpTIjKyzgzqvzE6viGoA/exec";
+  const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
 
   let allWorkers = [];
   let currentFilter = "all";
@@ -255,6 +284,8 @@
 
     rows.forEach(w => {
       const tr = document.createElement('tr');
+      const sendLabel = w.Status === 'Responded' ? '' :
+        '<button class="send-one-btn" data-fin="' + escapeHtml(w.FIN) + '" ' + (adminPassword ? '' : 'disabled') + '>Send</button>';
       tr.innerHTML =
         '<td class="name-cell"><b>' + escapeHtml(w.Name) + '</b><span>' + escapeHtml(w.Employer) + '</span></td>' +
         '<td>' + escapeHtml(w.FIN) + '</td>' +
@@ -262,8 +293,23 @@
         '<td>' + escapeHtml(w.Email) + '</td>' +
         '<td><span class="status-pill status-' + w.Status.replace(/\s+/g, '') + '">' + escapeHtml(w.Status) + '</span></td>' +
         '<td>' + fmtDate(w.SentDate) + '</td>' +
-        '<td>' + fmtDate(w.RespondedDate) + '</td>';
+        '<td>' + fmtDate(w.RespondedDate) + '</td>' +
+        '<td>' + sendLabel + '</td>';
       tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.send-one-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const fin = btn.getAttribute('data-fin');
+        if (!confirm('Send the form link to this worker now?')) return;
+        btn.disabled = true;
+        btn.textContent = '…';
+        apiCall('sendOne', { fin: fin }).then(res => {
+          if (res.error) { alert(res.error); btn.disabled = false; btn.textContent = 'Send'; return; }
+          toast('Sent to ' + res.name);
+          loadData();
+        });
+      });
     });
   }
 
@@ -303,7 +349,8 @@
     document.getElementById('lockBtn').textContent = unlocked ? '🔓 Admin Unlocked' : '🔒 Admin Login';
     document.getElementById('lockBtn').classList.toggle('unlocked', unlocked);
     ['btnSendAll', 'btnSendReminders'].forEach(id => document.getElementById(id).disabled = !unlocked);
-    ['btnImport', 'btnRefresh'].forEach(id => document.getElementById(id).classList.toggle('disabled', !unlocked));
+    ['btnImport', 'btnRefresh', 'btnResetCampaign'].forEach(id => document.getElementById(id).classList.toggle('disabled', !unlocked));
+    renderTable();
   }
 
   document.getElementById('btnSendAll').addEventListener('click', () => {
@@ -322,6 +369,28 @@
     apiCall('sendReminders').then(res => {
       if (res.error) { alert(res.error); return; }
       toast('Sent: ' + res.sent + ', Failed: ' + res.failed);
+      loadData();
+    });
+  });
+
+  document.getElementById('btnResetFilters').addEventListener('click', () => {
+    document.getElementById('search').value = '';
+    document.getElementById('employerFilter').value = '';
+    document.querySelectorAll('nav .item').forEach(i => i.classList.remove('active'));
+    document.querySelector('nav .item[data-filter="all"]').classList.add('active');
+    currentFilter = 'all';
+    renderTable();
+    toast('Filters reset');
+  });
+
+  document.getElementById('btnResetCampaign').addEventListener('click', () => {
+    if (!adminPassword) return;
+    if (!confirm('This will reset ALL workers back to "Not Sent" and clear every Sent/Responded date. This cannot be undone. Continue?')) return;
+    if (!confirm('Really sure? This wipes this campaign\'s progress in the WorkerTracking sheet.')) return;
+    toast('Resetting…');
+    apiCall('resetCampaign').then(res => {
+      if (res.error) { alert(res.error); return; }
+      toast('Reset ' + res.reset + ' workers to Not Sent');
       loadData();
     });
   });
