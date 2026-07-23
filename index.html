@@ -159,12 +159,14 @@
         </div>
       </div>
       <div class="hero-right">
+        <select id="campaignSelect" style="background:rgba(255,255,255,0.12); color:white; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:6px 10px; font-size:12px;"></select>
         <div class="badge" id="campaignBadge">–</div>
         <div class="who">Signed in as <b id="whoAmI"></b></div>
         <button id="logoutBtn">Log Out</button>
       </div>
     </div>
     <div class="hero-note">⚠ This dashboard contains confidential worker data. Do not share this link outside HR.</div>
+    <div class="hero-note" id="readOnlyNote" style="display:none; background:rgba(255,183,77,0.2); margin-left:8px;">📁 Viewing a past quarter — read-only. Switch to the current quarter to send emails or make changes.</div>
   </div>
 
   <div class="layout">
@@ -197,6 +199,7 @@
         <button class="action-btn btn-warn" id="btnSendReminders">🔔 Send Reminders</button>
         <button class="action-btn btn-select" id="btnSendSelected" disabled>✉ Send to Selected (0)</button>
         <div class="spacer"></div>
+        <button class="action-btn btn-outline" id="btnExportCsv">⬇ Export CSV</button>
         <button class="action-btn btn-outline" id="btnResetFilters">↺ Reset Filters</button>
       </div>
 
@@ -245,7 +248,7 @@
 
 <script>
   // ── The only line you need to change: paste your Apps Script Web App URL here ──
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEjnvSFQwEeIhEdxS-LcNMNl4BW-LNihgM8bGC_RqaqNKR1rQpTIjKyzgzqvzE6viGoA/exec";
+  const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
 
   const SESSION_KEY = "fwPortalSession";
 
@@ -330,15 +333,52 @@
   })();
 
   // ── Dashboard data ──
+  let viewingCampaign = null;   // null = "use whatever the server says is current"
+  let isReadOnly = false;
+
   function loadData() {
-    apiCall('data').then(result => {
+    apiCall('data', viewingCampaign ? { campaign: viewingCampaign } : {}).then(result => {
       if (result.error) { showError(result.error); return; }
       allWorkers = result.workers || [];
+      viewingCampaign = result.campaignId;
+      isReadOnly = result.campaignId !== result.currentCampaign;
+
       document.getElementById('campaignBadge').textContent = result.campaignId || '';
+      populateCampaignSelect(result.availableCampaigns || [], result.currentCampaign, result.campaignId);
+      toggleReadOnlyUI();
+
       populateFilters();
       selectedFins.clear();
       renderAll();
     }).catch(err => showError(err.message));
+  }
+
+  function populateCampaignSelect(campaigns, current, selected) {
+    const sel = document.getElementById('campaignSelect');
+    sel.innerHTML = '';
+    campaigns.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c === current ? c + ' (current)' : c;
+      sel.appendChild(opt);
+    });
+    sel.value = selected;
+  }
+
+  document.getElementById('campaignSelect').addEventListener('change', (e) => {
+    viewingCampaign = e.target.value;
+    loadData();
+  });
+
+  function toggleReadOnlyUI() {
+    document.getElementById('readOnlyNote').style.display = isReadOnly ? 'inline-block' : 'none';
+    ['btnSendAll', 'btnSendReminders', 'btnSendSelected'].forEach(id => {
+      document.getElementById(id).disabled = isReadOnly || (id === 'btnSendSelected' && selectedFins.size === 0);
+    });
+    ['btnImport', 'btnResetCampaign'].forEach(id => {
+      document.getElementById(id).style.pointerEvents = isReadOnly ? 'none' : '';
+      document.getElementById(id).style.opacity = isReadOnly ? '0.4' : '';
+    });
   }
 
   function showError(msg) {
@@ -444,7 +484,7 @@
 
     rows.forEach(w => {
       const fin = (w.FIN || '').toUpperCase();
-      const sendLabel = w.Status === 'Responded' ? '' :
+      const sendLabel = (w.Status === 'Responded' || isReadOnly) ? '' :
         '<button class="send-one-btn" data-fin="' + escapeHtml(fin) + '">Send</button>';
       const tr = document.createElement('tr');
       tr.innerHTML =
@@ -493,7 +533,7 @@
     const n = selectedFins.size;
     const btn = document.getElementById('btnSendSelected');
     btn.textContent = '✉ Send to Selected (' + n + ')';
-    btn.disabled = n === 0;
+    btn.disabled = n === 0 || isReadOnly;
     const visibleFins = new Set(getFilteredSorted().map(w => (w.FIN || '').toUpperCase()));
     const allVisibleSelected = visibleFins.size > 0 && [...visibleFins].every(f => selectedFins.has(f));
     document.getElementById('selectAll').checked = allVisibleSelected;
@@ -542,6 +582,29 @@
   document.getElementById('employerFilter').addEventListener('change', renderTable);
   document.getElementById('passFilter').addEventListener('change', renderTable);
 
+  document.getElementById('btnExportCsv').addEventListener('click', () => {
+    const rows = getFilteredSorted();
+    if (!rows.length) { alert('No rows to export.'); return; }
+
+    const cols = ['EmployeeID', 'Name', 'Employer', 'FIN', 'PassType', 'Email', 'MobileNumber', 'SubmittedEmail', 'Address', 'Status', 'SentDate', 'RespondedDate', 'ReminderCount', 'Campaign'];
+    const csvEscape = (v) => {
+      const s = (v === undefined || v === null) ? '' : String(v);
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+    const lines = [cols.join(',')];
+    rows.forEach(w => {
+      lines.push(cols.map(c => csvEscape(w[c])).join(','));
+    });
+    const csvContent = lines.join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'fw-portal-' + (viewingCampaign || 'export') + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    toast('Exported ' + rows.length + ' rows');
+  });
+
   document.getElementById('btnResetFilters').addEventListener('click', () => {
     document.getElementById('search').value = '';
     document.getElementById('employerFilter').value = '';
@@ -587,10 +650,11 @@
   });
 
   document.getElementById('btnImport').addEventListener('click', () => {
+    if (isReadOnly) { alert('Switch to the current quarter to import workers.'); return; }
     toast('Importing…');
     apiCall('importWorkers').then(res => {
       if (res.error) { alert(res.error); return; }
-      toast('Imported ' + res.imported + ' new workers');
+      toast('Imported ' + res.imported + ' new workers into ' + res.campaign);
       loadData();
     });
   });
@@ -601,8 +665,9 @@
   });
 
   document.getElementById('btnResetCampaign').addEventListener('click', () => {
-    if (!confirm('This will reset ALL workers back to "Not Sent" and clear every Sent/Responded date and submitted address/mobile/email. This cannot be undone. Continue?')) return;
-    if (!confirm('Really sure? This wipes this campaign\'s progress in the WorkerTracking sheet.')) return;
+    if (isReadOnly) { alert('Switch to the current quarter to reset it.'); return; }
+    if (!confirm('This will reset all workers in the CURRENT quarter (' + viewingCampaign + ') back to "Not Sent" and clear their Sent/Responded dates. Past quarters are never affected. Continue?')) return;
+    if (!confirm('Really sure? This wipes this quarter\'s progress in WorkerTracking.')) return;
     toast('Resetting…');
     apiCall('resetCampaign').then(res => {
       if (res.error) { alert(res.error); return; }
