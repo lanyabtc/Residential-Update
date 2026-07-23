@@ -8,11 +8,34 @@
   * { box-sizing: border-box; }
   body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f4f6f8; margin: 0; color: #1a1a1a; }
 
-  .hero {
+  /* ── Login screen ── */
+  #loginScreen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, #1e3a5f 0%, #14263e 100%);
-    color: white;
-    padding: 22px 28px;
   }
+  .login-card {
+    background: white; border-radius: 12px; padding: 36px 34px; width: 100%; max-width: 360px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .login-card .fallback-logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; margin-bottom: 4px; }
+  .login-card .fallback-logo .accent { color: #e8792f; }
+  .login-card img { height: 32px; margin-bottom: 4px; }
+  .login-card h1 { font-size: 16px; margin: 14px 0 2px; }
+  .login-card p.sub { font-size: 12px; color: #888; margin: 0 0 20px; }
+  .login-card label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 4px; margin-top: 14px; }
+  .login-card input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+  .login-card button {
+    width: 100%; margin-top: 20px; background: #e8792f; color: white; border: none;
+    padding: 11px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .login-card button:hover { background: #c85f16; }
+  .login-error { color: #c0392b; font-size: 12px; margin-top: 10px; display: none; }
+  .login-note { font-size: 11px; color: #999; margin-top: 18px; text-align: center; line-height: 1.5; }
+
+  /* ── Dashboard ── */
+  #dashboardScreen { display: none; }
+
+  .hero { background: linear-gradient(135deg, #1e3a5f 0%, #14263e 100%); color: white; padding: 22px 28px; }
   .hero-top { display: flex; align-items: center; justify-content: space-between; }
   .hero-brand { display: flex; align-items: center; gap: 14px; }
   .hero-brand img { height: 34px; }
@@ -21,14 +44,11 @@
   .hero-titles { border-left: 1px solid rgba(255,255,255,0.25); padding-left: 14px; }
   .hero-titles .t1 { font-size: 15px; font-weight: 600; }
   .hero-titles .t2 { font-size: 12px; color: #9fb3c8; }
-  .hero-right { display: flex; align-items: center; gap: 10px; }
+  .hero-right { display: flex; align-items: center; gap: 12px; }
   .hero .badge { background: rgba(255,255,255,0.12); padding: 4px 12px; border-radius: 6px; font-size: 12px; }
-  #lockBtn { background: #e8792f; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; }
-  #lockBtn.unlocked { background: #2e9e5b; }
-  .hero-note {
-    margin-top: 14px; font-size: 12px; color: #cdd8e3; background: rgba(255,255,255,0.06);
-    padding: 8px 12px; border-radius: 6px; display: inline-block;
-  }
+  .hero .who { font-size: 12px; color: #cdd8e3; }
+  #logoutBtn { background: rgba(255,255,255,0.12); color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; }
+  .hero-note { margin-top: 14px; font-size: 12px; color: #cdd8e3; background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 6px; display: inline-block; }
 
   .layout { display: flex; min-height: calc(100vh - 110px); }
   nav { width: 220px; background: white; border-right: 1px solid #eee; padding: 18px 12px; }
@@ -42,10 +62,9 @@
   nav .divider { height: 1px; background: #eee; margin: 14px 0; }
   nav .action-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #444; }
   nav .action-item:hover { background: #f5f5f7; }
-  nav .action-item.disabled { color: #ccc; cursor: not-allowed; }
   nav .action-item.danger { color: #c0392b; }
 
-  main { flex: 1; padding: 22px 26px; }
+  main { flex: 1; padding: 22px 26px; min-width: 0; }
   .cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 18px; }
   .card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-top: 3px solid #ccc; }
   .card.total { border-top-color: #7c8896; }
@@ -60,114 +79,166 @@
   .card .bar-fill { height: 100%; background: #e8792f; }
 
   .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-  button { border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.action-btn { border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  button.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-primary { background: #1e3a5f; color: white; }
+  .btn-select { background: #e8792f; color: white; }
   .btn-warn { background: #fff7e6; color: #b8860b; border: 1px solid #f0d78c; }
   .btn-outline { background: white; color: #333; border: 1px solid #ddd; }
   .toolbar .spacer { flex: 1; }
 
   .filters { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  input[type=text], input[type=password], select { padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
+  input[type=text], select { padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
   input[type=text] { flex: 1; min-width: 220px; }
 
   .panel { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
   .panel-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid #eee; }
   .panel-head b { font-size: 14px; }
   .panel-head .results { color: #999; font-size: 12px; background: #f2f2f2; padding: 2px 8px; border-radius: 10px; }
+  .panel-head .select-all { margin-left: auto; font-size: 12px; color: #666; display: flex; align-items: center; gap: 6px; }
 
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 11px; color: #888; text-transform: uppercase; padding: 10px 14px; letter-spacing: 0.3px; background: #fafafa; border-bottom: 1px solid #eee; }
-  td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid #f2f2f2; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+  th { text-align: left; font-size: 11px; color: #888; text-transform: uppercase; padding: 10px 12px; letter-spacing: 0.3px; background: #fafafa; border-bottom: 1px solid #eee; white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: #444; }
+  th .arrow { font-size: 9px; margin-left: 3px; opacity: 0.5; }
+  td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #f2f2f2; }
   tr:hover td { background: #fafbff; }
   .name-cell b { display: block; }
   .name-cell span { color: #999; font-size: 12px; }
-  .status-pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .status-pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
   .status-NotSent { background: #e9edf2; color: #1e3a5f; }
   .status-Sent { background: #fff7e6; color: #b8860b; }
   .status-Responded { background: #e8f9ee; color: #219150; }
   .status-Overdue { background: #fdecea; color: #c0392b; }
-  .send-one-btn {
-    background: none; border: 1px solid #ddd; color: #1e3a5f; padding: 4px 10px;
-    font-size: 11px; border-radius: 6px; font-weight: 600;
-  }
+  .send-one-btn { background: none; border: 1px solid #ddd; color: #1e3a5f; padding: 4px 10px; font-size: 11px; border-radius: 6px; font-weight: 600; white-space: nowrap; }
   .send-one-btn:hover { background: #f4f6f8; }
+  .addr-cell { max-width: 220px; white-space: normal; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: #999; }
   .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
   .empty-state b { color: #444; display: block; margin-bottom: 4px; font-size: 15px; }
 
-  #toast { position: fixed; bottom: 20px; right: 20px; background: #1e3a5f; color: white; padding: 12px 18px; border-radius: 8px; font-size: 13px; display: none; }
+  #toast { position: fixed; bottom: 20px; right: 20px; background: #1e3a5f; color: white; padding: 12px 18px; border-radius: 8px; font-size: 13px; display: none; z-index: 999; }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="hero-top">
-    <div class="hero-brand">
-      <img src="logo.png" alt="Elitez" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';">
-      <div class="fallback-logo" id="fallbackLogo" style="display:none">ELI<span class="accent">T</span>EZ</div>
-      <div class="hero-titles">
-        <div class="t1">Foreign Worker Residential Update</div>
-        <div class="t2">HR Workforce Portal · Internal Use Only</div>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="badge" id="campaignBadge">–</div>
-      <button id="lockBtn">🔒 Admin Login</button>
-    </div>
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img src="logo.png" alt="Elitez" onerror="this.style.display='none'; document.getElementById('loginFallbackLogo').style.display='block';">
+    <div class="fallback-logo" id="loginFallbackLogo" style="display:none">ELI<span class="accent">T</span>EZ</div>
+    <h1>Foreign Worker Residential Update</h1>
+    <p class="sub">HR Workforce Portal · Sign in to continue</p>
+
+    <label>Username</label>
+    <input type="text" id="loginUsername" autocomplete="username">
+
+    <label>Password</label>
+    <input type="password" id="loginPassword" autocomplete="current-password">
+
+    <button id="loginBtn">Sign In</button>
+    <div class="login-error" id="loginError">Incorrect username or password.</div>
+    <div class="login-note">⚠ This system contains confidential worker data.<br>Authorised HR personnel only.</div>
   </div>
-  <div class="hero-note">⚠ This dashboard contains confidential worker data. Do not share this link outside HR.</div>
 </div>
 
-<div class="layout">
-  <nav>
-    <div class="section-label">Views</div>
-    <div class="item active" data-filter="all">All Workers <span class="count" id="cnt-all">0</span></div>
-    <div class="item" data-filter="Not Sent">Not Sent <span class="count" id="cnt-notsent">0</span></div>
-    <div class="item" data-filter="Sent">Sent <span class="count" id="cnt-sent">0</span></div>
-    <div class="item" data-filter="Responded">Responded <span class="count" id="cnt-responded">0</span></div>
-    <div class="item overdue-item" data-filter="Overdue">Overdue <span class="count" id="cnt-overdue">0</span></div>
+<!-- ============ DASHBOARD SCREEN ============ -->
+<div id="dashboardScreen">
 
-    <div class="divider"></div>
-    <div class="section-label">Actions (admin)</div>
-    <div class="action-item disabled" id="btnImport">⬆ Import New Workers</div>
-    <div class="action-item disabled" id="btnRefresh">🔄 Refresh Now</div>
-    <div class="action-item disabled danger" id="btnResetCampaign">⟲ Reset Campaign Data</div>
-  </nav>
-
-  <main>
-    <div class="cards">
-      <div class="card total"><div class="label">Total Workers</div><div class="num" id="statTotal">–</div><div class="sub">Current roster</div></div>
-      <div class="card notsent"><div class="label">Not Sent</div><div class="num" id="statNotSent">–</div><div class="sub" id="statNotSentSub">–</div></div>
-      <div class="card responded"><div class="label">Responded</div><div class="num" id="statResponded">–</div><div class="sub">Form submitted</div></div>
-      <div class="card overdue"><div class="label">Overdue</div><div class="num" id="statOverdue">–</div><div class="sub">Past deadline</div></div>
-      <div class="card rate"><div class="label">Response Rate</div><div class="num" id="statRate">–</div><div class="bar"><div class="bar-fill" id="rateBar" style="width:0%"></div></div></div>
-    </div>
-
-    <div class="toolbar">
-      <button class="btn-primary" id="btnSendAll" disabled>▶ Send All</button>
-      <button class="btn-warn" id="btnSendReminders" disabled>🔔 Send Reminders</button>
-      <div class="spacer"></div>
-      <button class="btn-outline" id="btnResetFilters">↺ Reset Filters</button>
-    </div>
-
-    <div class="filters">
-      <input type="text" id="search" placeholder="Search name, FIN, email...">
-      <select id="employerFilter"><option value="">All Entities</option></select>
-    </div>
-
-    <div class="panel">
-      <div class="panel-head"><b>Workers</b><span class="results" id="resultsCount">0 results</span></div>
-      <table>
-        <thead><tr><th>Name &amp; Entity</th><th>FIN</th><th>Pass Type</th><th>Email</th><th>Status</th><th>Sent</th><th>Responded</th><th>Action</th></tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-      <div class="empty-state" id="emptyState" style="display:none">
-        <div class="icon">👥</div><b id="emptyTitle">Loading…</b><div id="emptySub"></div>
+  <div class="hero">
+    <div class="hero-top">
+      <div class="hero-brand">
+        <img src="logo.png" alt="Elitez" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';">
+        <div class="fallback-logo" id="fallbackLogo" style="display:none">ELI<span class="accent">T</span>EZ</div>
+        <div class="hero-titles">
+          <div class="t1">Foreign Worker Residential Update</div>
+          <div class="t2">HR Workforce Portal · Internal Use Only</div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="badge" id="campaignBadge">–</div>
+        <div class="who">Signed in as <b id="whoAmI"></b></div>
+        <button id="logoutBtn">Log Out</button>
       </div>
     </div>
-  </main>
+    <div class="hero-note">⚠ This dashboard contains confidential worker data. Do not share this link outside HR.</div>
+  </div>
+
+  <div class="layout">
+    <nav>
+      <div class="section-label">Views</div>
+      <div class="item active" data-filter="all">All Workers <span class="count" id="cnt-all">0</span></div>
+      <div class="item" data-filter="Not Sent">Not Sent <span class="count" id="cnt-notsent">0</span></div>
+      <div class="item" data-filter="Sent">Sent <span class="count" id="cnt-sent">0</span></div>
+      <div class="item" data-filter="Responded">Responded <span class="count" id="cnt-responded">0</span></div>
+      <div class="item overdue-item" data-filter="Overdue">Overdue <span class="count" id="cnt-overdue">0</span></div>
+
+      <div class="divider"></div>
+      <div class="section-label">Actions</div>
+      <div class="action-item" id="btnImport">⬆ Import New Workers</div>
+      <div class="action-item" id="btnRefresh">🔄 Refresh Now</div>
+      <div class="action-item danger" id="btnResetCampaign">⟲ Reset Campaign Data</div>
+    </nav>
+
+    <main>
+      <div class="cards">
+        <div class="card total"><div class="label">Total Workers</div><div class="num" id="statTotal">–</div><div class="sub">Current roster</div></div>
+        <div class="card notsent"><div class="label">Not Sent</div><div class="num" id="statNotSent">–</div><div class="sub" id="statNotSentSub">–</div></div>
+        <div class="card responded"><div class="label">Responded</div><div class="num" id="statResponded">–</div><div class="sub">Form submitted</div></div>
+        <div class="card overdue"><div class="label">Overdue</div><div class="num" id="statOverdue">–</div><div class="sub">Past deadline</div></div>
+        <div class="card rate"><div class="label">Response Rate</div><div class="num" id="statRate">–</div><div class="bar"><div class="bar-fill" id="rateBar" style="width:0%"></div></div></div>
+      </div>
+
+      <div class="toolbar">
+        <button class="action-btn btn-primary" id="btnSendAll">▶ Send All (Not Sent)</button>
+        <button class="action-btn btn-warn" id="btnSendReminders">🔔 Send Reminders</button>
+        <button class="action-btn btn-select" id="btnSendSelected" disabled>✉ Send to Selected (0)</button>
+        <div class="spacer"></div>
+        <button class="action-btn btn-outline" id="btnResetFilters">↺ Reset Filters</button>
+      </div>
+
+      <div class="filters">
+        <input type="text" id="search" placeholder="Search name, FIN, email...">
+        <select id="employerFilter"><option value="">All Entities</option></select>
+        <select id="passFilter"><option value="">All Pass Types</option></select>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <b>Workers</b>
+          <span class="results" id="resultsCount">0 results</span>
+          <label class="select-all"><input type="checkbox" id="selectAll"> Select all visible</label>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:34px"></th>
+                <th class="sortable" data-col="EmployeeID">Employee ID <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="Name">Name &amp; Entity <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="FIN">FIN <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="PassType">Pass Type <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="MobileNumber">Mobile <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="SubmittedEmail">Submitted Email <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="Address">Address <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="Status">Status <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="SentDate">Sent <span class="arrow">↕</span></th>
+                <th class="sortable" data-col="RespondedDate">Responded <span class="arrow">↕</span></th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <div class="icon">👥</div><b id="emptyTitle">Loading…</b><div id="emptySub"></div>
+        </div>
+      </div>
+    </main>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -176,9 +247,13 @@
   // ── The only line you need to change: paste your Apps Script Web App URL here ──
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEjnvSFQwEeIhEdxS-LcNMNl4BW-LNihgM8bGC_RqaqNKR1rQpTIjKyzgzqvzE6viGoA/exec";
 
+  const SESSION_KEY = "fwPortalSession";
+
   let allWorkers = [];
   let currentFilter = "all";
-  let adminPassword = null;
+  let currentUser = null; // { username, password, displayName }
+  let selectedFins = new Set();
+  let sortCol = null, sortAsc = true;
 
   function toast(msg) {
     const t = document.getElementById('toast');
@@ -190,20 +265,78 @@
   function apiCall(action, params) {
     params = params || {};
     params.action = action;
-    if (adminPassword) params.password = adminPassword;
+    if (currentUser) {
+      params.username = currentUser.username;
+      params.password = currentUser.password;
+    }
     const qs = Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
     return fetch(SCRIPT_URL + '?' + qs).then(res => res.json());
   }
 
+  // ── Login flow ──
+  function attemptLogin(username, password, silent) {
+    return apiCall('login', { username: username, password: password }).then(res => {
+      if (res.ok) {
+        currentUser = { username: username, password: password, displayName: res.displayName };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+        showDashboard();
+        return true;
+      } else {
+        if (!silent) {
+          document.getElementById('loginError').style.display = 'block';
+        } else {
+          sessionStorage.removeItem(SESSION_KEY);
+        }
+        return false;
+      }
+    });
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    const u = document.getElementById('loginUsername').value.trim();
+    const p = document.getElementById('loginPassword').value;
+    document.getElementById('loginError').style.display = 'none';
+    if (!u || !p) { document.getElementById('loginError').textContent = 'Please enter both username and password.'; document.getElementById('loginError').style.display = 'block'; return; }
+    attemptLogin(u, p, false);
+  });
+  document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('loginBtn').click();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem(SESSION_KEY);
+    currentUser = null;
+    document.getElementById('dashboardScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+  });
+
+  function showDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboardScreen').style.display = 'block';
+    document.getElementById('whoAmI').textContent = currentUser.displayName;
+    loadData();
+  }
+
+  // ── On page load: try to resume a session from this tab ──
+  (function tryResumeSession() {
+    const saved = sessionStorage.getItem(SESSION_KEY);
+    if (!saved) return;
+    try {
+      const parsed = JSON.parse(saved);
+      attemptLogin(parsed.username, parsed.password, true);
+    } catch (e) { sessionStorage.removeItem(SESSION_KEY); }
+  })();
+
+  // ── Dashboard data ──
   function loadData() {
     apiCall('data').then(result => {
-      if (result.error) {
-        showError(result.error);
-        return;
-      }
+      if (result.error) { showError(result.error); return; }
       allWorkers = result.workers || [];
       document.getElementById('campaignBadge').textContent = result.campaignId || '';
       populateFilters();
+      selectedFins.clear();
       renderAll();
     }).catch(err => showError(err.message));
   }
@@ -211,17 +344,29 @@
   function showError(msg) {
     document.getElementById('emptyState').style.display = 'block';
     document.getElementById('emptyTitle').textContent = 'Could not load data';
-    document.getElementById('emptySub').textContent = msg + ' — check SCRIPT_URL is correct and the script is deployed.';
+    document.getElementById('emptySub').textContent = msg;
   }
 
   function populateFilters() {
     const employers = [...new Set(allWorkers.map(w => w.Employer))].filter(Boolean).sort();
-    const sel = document.getElementById('employerFilter');
-    sel.innerHTML = '<option value="">All Entities</option>';
+    const empSel = document.getElementById('employerFilter');
+    const prevEmp = empSel.value;
+    empSel.innerHTML = '<option value="">All Entities</option>';
     employers.forEach(e => {
       const opt = document.createElement('option'); opt.value = e; opt.textContent = e;
-      sel.appendChild(opt);
+      empSel.appendChild(opt);
     });
+    empSel.value = prevEmp;
+
+    const passTypes = [...new Set(allWorkers.map(w => w.PassType))].filter(Boolean).sort();
+    const passSel = document.getElementById('passFilter');
+    const prevPass = passSel.value;
+    passSel.innerHTML = '<option value="">All Pass Types</option>';
+    passTypes.forEach(p => {
+      const opt = document.createElement('option'); opt.value = p; opt.textContent = p;
+      passSel.appendChild(opt);
+    });
+    passSel.value = prevPass;
   }
 
   function renderAll() {
@@ -256,20 +401,34 @@
     return isNaN(d) ? '—' : d.toLocaleDateString();
   }
 
-  function renderTable() {
+  function getFilteredSorted() {
     const q = document.getElementById('search').value.toLowerCase();
     const emp = document.getElementById('employerFilter').value;
+    const pass = document.getElementById('passFilter').value;
 
-    const rows = allWorkers.filter(w => {
+    let rows = allWorkers.filter(w => {
       if (currentFilter !== 'all' && w.Status !== currentFilter) return false;
       if (emp && w.Employer !== emp) return false;
+      if (pass && w.PassType !== pass) return false;
       if (q) {
-        const hay = (w.Name + ' ' + w.FIN + ' ' + w.Email).toLowerCase();
+        const hay = ((w.Name || '') + ' ' + (w.FIN || '') + ' ' + (w.Email || '') + ' ' + (w.EmployeeID || '')).toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
 
+    if (sortCol) {
+      rows = rows.slice().sort((a, b) => {
+        const av = (a[sortCol] || '').toString();
+        const bv = (b[sortCol] || '').toString();
+        return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+    }
+    return rows;
+  }
+
+  function renderTable() {
+    const rows = getFilteredSorted();
     document.getElementById('resultsCount').textContent = rows.length + ' results';
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
@@ -277,25 +436,39 @@
     if (!rows.length) {
       document.getElementById('emptyState').style.display = 'block';
       document.getElementById('emptyTitle').textContent = allWorkers.length ? 'No matching workers' : 'No workers yet';
-      document.getElementById('emptySub').textContent = allWorkers.length ? 'Try adjusting your search or filters.' : 'Use Admin Login → Import New Workers to load your roster.';
+      document.getElementById('emptySub').textContent = allWorkers.length ? 'Try adjusting your search or filters.' : 'Use "Import New Workers" in the sidebar to load your roster.';
+      updateSelectedCount();
       return;
     }
     document.getElementById('emptyState').style.display = 'none';
 
     rows.forEach(w => {
-      const tr = document.createElement('tr');
+      const fin = (w.FIN || '').toUpperCase();
       const sendLabel = w.Status === 'Responded' ? '' :
-        '<button class="send-one-btn" data-fin="' + escapeHtml(w.FIN) + '" ' + (adminPassword ? '' : 'disabled') + '>Send</button>';
+        '<button class="send-one-btn" data-fin="' + escapeHtml(fin) + '">Send</button>';
+      const tr = document.createElement('tr');
       tr.innerHTML =
+        '<td><input type="checkbox" class="rowcheck" data-fin="' + escapeHtml(fin) + '" ' + (selectedFins.has(fin) ? 'checked' : '') + '></td>' +
+        '<td>' + escapeHtml(w.EmployeeID) + '</td>' +
         '<td class="name-cell"><b>' + escapeHtml(w.Name) + '</b><span>' + escapeHtml(w.Employer) + '</span></td>' +
-        '<td>' + escapeHtml(w.FIN) + '</td>' +
+        '<td>' + escapeHtml(fin) + '</td>' +
         '<td>' + escapeHtml(w.PassType || '—') + '</td>' +
-        '<td>' + escapeHtml(w.Email) + '</td>' +
-        '<td><span class="status-pill status-' + w.Status.replace(/\s+/g, '') + '">' + escapeHtml(w.Status) + '</span></td>' +
+        '<td>' + escapeHtml(w.MobileNumber || '—') + '</td>' +
+        '<td>' + escapeHtml(w.SubmittedEmail || '—') + '</td>' +
+        '<td class="addr-cell">' + escapeHtml(w.Address || '—') + '</td>' +
+        '<td><span class="status-pill status-' + String(w.Status || '').replace(/\s+/g, '') + '">' + escapeHtml(w.Status) + '</span></td>' +
         '<td>' + fmtDate(w.SentDate) + '</td>' +
         '<td>' + fmtDate(w.RespondedDate) + '</td>' +
         '<td>' + sendLabel + '</td>';
       tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.rowcheck').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const fin = cb.getAttribute('data-fin');
+        if (cb.checked) selectedFins.add(fin); else selectedFins.delete(fin);
+        updateSelectedCount();
+      });
     });
 
     document.querySelectorAll('.send-one-btn').forEach(btn => {
@@ -311,7 +484,51 @@
         });
       });
     });
+
+    updateSelectedCount();
+    updateSortArrows();
   }
+
+  function updateSelectedCount() {
+    const n = selectedFins.size;
+    const btn = document.getElementById('btnSendSelected');
+    btn.textContent = '✉ Send to Selected (' + n + ')';
+    btn.disabled = n === 0;
+    const visibleFins = new Set(getFilteredSorted().map(w => (w.FIN || '').toUpperCase()));
+    const allVisibleSelected = visibleFins.size > 0 && [...visibleFins].every(f => selectedFins.has(f));
+    document.getElementById('selectAll').checked = allVisibleSelected;
+  }
+
+  function updateSortArrows() {
+    document.querySelectorAll('th.sortable').forEach(th => {
+      const col = th.getAttribute('data-col');
+      const arrow = th.querySelector('.arrow');
+      if (col === sortCol) {
+        arrow.textContent = sortAsc ? '↑' : '↓';
+        arrow.style.opacity = '1';
+      } else {
+        arrow.textContent = '↕';
+        arrow.style.opacity = '0.5';
+      }
+    });
+  }
+
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.getAttribute('data-col');
+      if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
+      renderTable();
+    });
+  });
+
+  document.getElementById('selectAll').addEventListener('change', (e) => {
+    const visible = getFilteredSorted();
+    visible.forEach(w => {
+      const fin = (w.FIN || '').toUpperCase();
+      if (e.target.checked) selectedFins.add(fin); else selectedFins.delete(fin);
+    });
+    renderTable();
+  });
 
   document.querySelectorAll('nav .item[data-filter]').forEach(item => {
     item.addEventListener('click', () => {
@@ -323,35 +540,19 @@
   });
   document.getElementById('search').addEventListener('input', renderTable);
   document.getElementById('employerFilter').addEventListener('change', renderTable);
+  document.getElementById('passFilter').addEventListener('change', renderTable);
 
-  // ── Admin unlock ──
-  document.getElementById('lockBtn').addEventListener('click', () => {
-    if (adminPassword) {
-      adminPassword = null;
-      setAdminUI(false);
-      toast('Locked');
-      return;
-    }
-    const pw = prompt('Enter admin password:');
-    if (!pw) return;
-    apiCall('checkPassword', { password: pw }).then(res => {
-      if (res.ok) {
-        adminPassword = pw;
-        setAdminUI(true);
-        toast('Admin unlocked');
-      } else {
-        alert('Incorrect password.');
-      }
-    });
-  });
-
-  function setAdminUI(unlocked) {
-    document.getElementById('lockBtn').textContent = unlocked ? '🔓 Admin Unlocked' : '🔒 Admin Login';
-    document.getElementById('lockBtn').classList.toggle('unlocked', unlocked);
-    ['btnSendAll', 'btnSendReminders'].forEach(id => document.getElementById(id).disabled = !unlocked);
-    ['btnImport', 'btnRefresh', 'btnResetCampaign'].forEach(id => document.getElementById(id).classList.toggle('disabled', !unlocked));
+  document.getElementById('btnResetFilters').addEventListener('click', () => {
+    document.getElementById('search').value = '';
+    document.getElementById('employerFilter').value = '';
+    document.getElementById('passFilter').value = '';
+    document.querySelectorAll('nav .item').forEach(i => i.classList.remove('active'));
+    document.querySelector('nav .item[data-filter="all"]').classList.add('active');
+    currentFilter = 'all';
+    sortCol = null;
     renderTable();
-  }
+    toast('Filters reset');
+  });
 
   document.getElementById('btnSendAll').addEventListener('click', () => {
     if (!confirm('Send the form link to everyone marked "Not Sent"?')) return;
@@ -373,30 +574,19 @@
     });
   });
 
-  document.getElementById('btnResetFilters').addEventListener('click', () => {
-    document.getElementById('search').value = '';
-    document.getElementById('employerFilter').value = '';
-    document.querySelectorAll('nav .item').forEach(i => i.classList.remove('active'));
-    document.querySelector('nav .item[data-filter="all"]').classList.add('active');
-    currentFilter = 'all';
-    renderTable();
-    toast('Filters reset');
-  });
-
-  document.getElementById('btnResetCampaign').addEventListener('click', () => {
-    if (!adminPassword) return;
-    if (!confirm('This will reset ALL workers back to "Not Sent" and clear every Sent/Responded date. This cannot be undone. Continue?')) return;
-    if (!confirm('Really sure? This wipes this campaign\'s progress in the WorkerTracking sheet.')) return;
-    toast('Resetting…');
-    apiCall('resetCampaign').then(res => {
+  document.getElementById('btnSendSelected').addEventListener('click', () => {
+    if (!selectedFins.size) return;
+    if (!confirm('Send the form link to ' + selectedFins.size + ' selected worker(s)?')) return;
+    toast('Sending…');
+    apiCall('sendSelected', { fins: [...selectedFins].join(',') }).then(res => {
       if (res.error) { alert(res.error); return; }
-      toast('Reset ' + res.reset + ' workers to Not Sent');
+      toast('Sent: ' + res.sent + ', Failed: ' + res.failed);
+      selectedFins.clear();
       loadData();
     });
   });
 
   document.getElementById('btnImport').addEventListener('click', () => {
-    if (!adminPassword) return;
     toast('Importing…');
     apiCall('importWorkers').then(res => {
       if (res.error) { alert(res.error); return; }
@@ -406,12 +596,20 @@
   });
 
   document.getElementById('btnRefresh').addEventListener('click', () => {
-    if (!adminPassword) return;
     toast('Refreshing…');
     loadData();
   });
 
-  loadData();
+  document.getElementById('btnResetCampaign').addEventListener('click', () => {
+    if (!confirm('This will reset ALL workers back to "Not Sent" and clear every Sent/Responded date and submitted address/mobile/email. This cannot be undone. Continue?')) return;
+    if (!confirm('Really sure? This wipes this campaign\'s progress in the WorkerTracking sheet.')) return;
+    toast('Resetting…');
+    apiCall('resetCampaign').then(res => {
+      if (res.error) { alert(res.error); return; }
+      toast('Reset ' + res.reset + ' workers to Not Sent');
+      loadData();
+    });
+  });
 </script>
 
 </body>
